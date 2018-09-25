@@ -25,9 +25,9 @@ This tutorial is split into several parts:
 - [Core Concepts]({{ site.baseurl }}/tutorial/phonecat/1-concepts/)
 - [`Phone` model]({{ site.baseurl }}/tutorial/phonecat/2-model/)
 - [Controllers]({{ site.baseurl }}/tutorial/phonecat/3-dao/)
-- [Custom Templates]({{ site.baseurl }}/tutorial/phonecat/4-templates)
+- [UI Library]({{ site.baseurl }}/tutorial/phonecat/4-UI)
 - [Navigation]({{ site.baseurl }}/tutorial/phonecat/5-navigation)
-- [`DetailView` and External Templates]({{ site.baseurl }}/tutorial/phonecat/6-detailview)
+- [`DetailView` and UI Library]({{ site.baseurl }}/tutorial/phonecat/6-detailview)
 
 ## Audience
 
@@ -46,19 +46,19 @@ Let's dive right in. Make a new directory for your project, switch to it, and do
 
     mkdir $PROJECT
     cd $PROJECT
-    git clone https://github.com/foam-framework/foam.git
+    git clone https://github.com/foam-framework/foam2.git
 
-Now you've got a subdirectory `foam/` that holds all the code for FOAM, along with numerous demos and test pages.
+Now you've got a subdirectory `foam2/` that holds all the code for FOAM, along with numerous demos and test pages.
 
-The library is split across many files, but you only need to include one in your HTML document: `core/bootFOAM.js`. There is likewise `core/foam.css` which should be included for some views to work properly.
+The library is split across many files, but you only need to include one in your HTML document: `core/bootFOAM.js`.
 
 Create `$PROJECT/index.html` with the following contents:
 
 {% highlight html %}
 <html>
   <head>
-    <script src="foam/core/bootFOAM.js"></script>
-    <link rel="stylesheet" href="foam/core/foam.css" />
+    <script src="foam2/src/foam.js"></script>
+    <script src=“foam_powered.js"></script>
   </head>
   <body>
     <script>
