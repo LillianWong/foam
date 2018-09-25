@@ -35,12 +35,12 @@ FOAM's class definitions take the form of a JSON object passed to the `CLASS()`
 global function. The following defines a class similar to the Java one above:
 
 {% highlight js %}
-CLASS({
+foam.CLASS({
   name: 'MyClass',
-  extendsModel: 'BaseClass',
+  extends: 'BaseClass',
   properties: [
     {
-      model_: 'IntProperty',
+      Class: ‘Int’,
       name: 'someField'
     }
   ]
@@ -50,7 +50,7 @@ CLASS({
 ### Parts of a Class
 
 In both Java and FOAM, a class has a `name`, a parent class
-(`extendsModel`) that defaults to a fundamental class (`FObject`), properties
+(`extends`) that defaults to a fundamental class (`FObject`), properties
 and methods.
 
 The difference is that FOAM's classes are much richer than
@@ -59,22 +59,22 @@ their Java counterparts.
 FOAM properties are like public member variables, and are accessed in the same
 way: `point.x += 10`. But they have many more features: `postSet` functions
 to call when the property's value changes, the `view` to use when displaying
-this property to the user, `dynamicValue` for spreadsheet-style reactive
-programming, `defaultValue` and [much more]({{ site.baseurl }}/tutorial/phonecat/8-appendix).
+this property to the user, `expression` for spreadsheet-style reactive
+programming, `value` and [much more]({{ site.baseurl }}/tutorial/phonecat/8-appendix).
 
 FOAM models support `constants`, mixins (known as `traits`), special kinds of
-methods (`actions`, `listeners`, and `templates`) and more.
+methods (`actions`, `listeners`, and `UI library`) and more.
 
 ### A Simple Example
 
 Here's a simple class:
 
 {% highlight js %}
-CLASS({
+foam.CLASS({
   name: 'Point',
   properties: ['x', 'y'],
   methods: {
-    scale: function(s) {
+    function scale(s) {
       this.x *= s;
       this.y *= s;
     }
@@ -95,7 +95,7 @@ which will output
 
 {% highlight js %}
 {
-  "model_": "Point",
+  "class": "Point",
   "x": 60,
   "y": 40
 }
@@ -114,10 +114,10 @@ parent class's properties and methods (and listeners, actions, ...).
 {% highlight js %}
 CLASS({
   name: 'Point3D',
-  extendsModel: 'Point',
+  extends: 'Point',
   properties: ['z'],
   methods: {
-    scale: function(s) {
+    function scale(s) {
       this.SUPER(s);
       this.z *= s;
     }
@@ -132,7 +132,7 @@ the method `scale` too, but instead overrides it.
 This overridden method calls `this.SUPER(s)`, which is similar to calling
 `super.scale(s)` in Java.
 
-Because `class`, `super` and `extends` are reserved (but unused) words in
+Because `class` and `super` are reserved (but unused) words in
 Javascript, FOAM uses these alternative spellings.
 
 ### Properties
@@ -155,13 +155,10 @@ Actions are operations the user can perform on an instance of this class,
 like `send`ing an email. They can define `isEnabled` and `isAvailable` to
 control their state in the UI.
 
-Templates are, at runtime, methods that return strings. But in the class
-definition, they are written in FOAM's template syntax and are compiled at
-class load time. The syntax is JSP-style, with several powerful features added.
-Templates make it easy to write reactive UIs with two-way data binding.
+FOAM has a UI library, `U2`, which can be used to generate UI elements of a web page.
 
-Templates will be discussed in more detail in
-[part 4]({{ site.baseurl }}/tutorial/phonecat/4-templates), more information about all
+`U2` will be discussed in more detail in
+[part 4]({{ site.baseurl }}/tutorial/phonecat/4-UI), more information about all
 three special kinds of methods is in the
 [appendix]({{ site.baseurl }}/tutorial/phonecat/8-appendix).
 
@@ -185,16 +182,6 @@ operate on all kinds of models and views. In many cases, FOAM's default
 controllers can be used to build the structure of your application, requiring
 you to write code only for application-specific details while the controllers
 provide navigation, animations, editing, searching, and more.
-
-### Terminology Warning
-
-FOAM has an unfortunate terminology collision around the word "model".
-
-We use it to mean the M in MVC, but also refer to the JSON object that defines
-a class as its "model".
-
-This fact is visible, for example, in the JSON serialization of a FOAM object,
-which includes `"model_": "MyClass"`.
 
 
 ### Controllers

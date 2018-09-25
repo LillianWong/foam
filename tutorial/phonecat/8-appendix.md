@@ -21,32 +21,26 @@ own classes. Here are some of them, in roughly descending order of usefulness:
 - `preSet: function(old, nu) { ... }` is called with the old and new values of
   the property when it's *about* to change. The return value of `preSet` is the
   value which is actually stored.
-- `defaultValue`: Provide a fixed default value for this property. It won't
+- `value`: Provide a fixed default value for this property. It won't
   actually be stored on each object, saving memory and bandwidth.
-- `defaultValueFn: function() { ... }`: A function that's called *every time*
+- `expression: function() { ... }`: A function that's called *every time*
   the default value is required. Can use `this` to refer to the instance in
   question, so you can compute the default based on some other properties.
-- `factory: function() { ... }` is called once during `init` after creating a
-  new object, the value returned becomes the value of this property.
-    - This is commonly used as `factory: function() { return []; }` to make each
-      object have its own empty array. `defaultValue: []` would make all
-      instances share one array!
+- `factory: function() { ... }` is called once when a new object is created, the value returned becomes the value of this property
 - `view` specifies the view that should be used to render this property.
-  Defaults to `TextFieldView` for properties with no specified `model_`.
-  Properties with eg. `StringArrayProperty` as their model may have other
+  Defaults to `TextField` for properties with no specified `class`.
+  Properties with eg. `StringArray` as their model may have other
   defaults.
   - You can specify the `view` in several ways, the commonest two are:
-    - By name: `view: 'DAOListView'`
-    - With a "factory" object:
-      `{ factory_: 'DAOListView', rowView: 'MyCitationView' }`
+    - By name: `view: { class: 'DAOList', rowView: 'MyCitationView' }`
+    - With a view factory:
+      `{ class: ‘ViewFactory’, name: ‘listFactory’, value: ‘DAOList’ }`
 - `required: true` indicates that this field is required for the model to
   function correctly.
 - `transient: true` indicates that this field should not be stored by DAOs.
 - `hidden: true` indicates that this field should not be rendered by views.
 - `label: 'string'` gives the label that views should use to label this
   property, if applicable. Defaults to `this.name`, naturally.
-- `help: 'string'` explanatory help text for this property, which could go in a
-  tooltip.
 - `documentation`: Gives developer documentation for this property.
 - `getter: function() { ... }` is called each time the property is accessed, and
   its return value is the value of the property.
@@ -62,13 +56,15 @@ own classes. Here are some of them, in roughly descending order of usefulness:
   be used as if they were real properties, but they access the same underlying
   value.
 
-There are some more having to do with tables, i18n, autocomplete and more. See `core/mm2Property.js` for the complete definition of `Property`. `core/mm3Types.js` adds `IntProperty` and friends, and some of those have more properties specific to their type.
+There are some more having to do with tables, i18n, autocomplete and more. See `core/Property.js` for the complete definition of `Property`. `core/types.js` adds Int property and friends, and some of those have more properties specific to their type.
 
 ### Property Binding
 
-For every property `foo` on a FOAM object, there is a `foo$` which is a "Value"
-for the property. Setting two objects to share this Value, rather than the
-literal value, is like passing by reference instead of by value. To illustrate:
+### Slots
+
+In addition to things like `setter` and `postSet`, you can listen for updates to any property. 
+
+For every property `foo` on a FOAM object, there is a `foo$` which is a “Value” for the property. Setting two objects to share this Value, rather than the literal value, is like passing by reference instead of by value. To illustrate:
 
 {% highlight js %}
 var o1 = Foo.create({ bar: 'abc' });
@@ -90,6 +86,20 @@ o2.bar = 'def';
 console.log(o2.bar);        // 'def'
 console.log(o1.bar);        // 'def'
 {% endhighlight %}
+
+To make an UI component update every time some property changes:
+
+{% highlight js %}
+this.add(obj.prop$)
+{% endhighlight %}
+
+To create a listener function on some properties:
+
+{% highlight js %}
+obj.slot(function[, slots])
+{% endhighlight %}
+- `object` is the object this property belongs to. It serves as `this`, effectively.
+- `slots` are the properties that the return value depends on.
 
 This makes it convenient to eg. bind a view to a property from a larger class.
 
@@ -117,12 +127,11 @@ on properties changing.
 We showed `IntProperty` above; there are many more types of properties. Most you
 can easily guess what they do:
 
-`StringProperty`, `BooleanProperty`, `DateProperty`, `DateTimeProperty`,
-`IntProperty`, `FloatProperty`, `FunctionProperty`, `ArrayProperty`,
-`ReferenceProperty`, `StringArrayProperty`, `DAOProperty`,
-`ReferenceArrayProperty`.
+`String`, `Boolean`, `Date`, `DateTime`,
+`Int`, `Float`, `Function`, `Array`,
+`Reference`, `StringArray`, `DAOProperty`.
 
-There are many more; most of these are defined in `core/mm3Types.js`.
+There are many more; most of these are defined in `core/types.js`.
 
 ## Requires, Imports, Exports, and Contexts
 
@@ -136,7 +145,7 @@ As shown in the main tutorial, FOAM models should `require` their dependencies.
 A class has a `requires` array containing the names of those classes it needs:
 
 {% highlight js %}
-CLASS({
+foam.CLASS({
   name: 'SomeClass',
   requires: [
     'SomeView',
@@ -150,40 +159,15 @@ Where `this` is available, it is best to use these rather than the globals
 `SomeView` and `AnotherClass`, because then they can be overridden with drop-in
 replacements by other classes, in a dependency injection fashion.
 
-### Async Loading
-
-In order to load a class, FOAM may need to perform async operations:
-- Fetch external templates via XHR.
-- Compile templates, inline or external, in a setting without synchronous
-  `eval`, such as a Chrome app.
-
-Because of this, FOAM requires that all classes be `arequire()`d by name, like
-this:
-
-{% highlight js %}
-arequire('SomeClass')()
-{% endhighlight %}
-
-But you won't need to do that yourself in most apps, for two reasons:
-
-1. `<foam>` tags automatically `arequire` what they need.
-2. When a class is `arequire`d, everything from its `requires` list is
-   `arequire`d too.
-
-Therefore, if you use a `<foam>` tag at the top level, and specify `requires`
-on all your classes, your app should load with no explicit `arequire`s.
-
 
 ### Contexts and Dependency Injection
 
-Every instance in FOAM has a *context*. This is an object, spelled `this.X`,
-which is supplied at creation time. You generally won't need to reference
-`this.X` directly.
+Every instance in FOAM has a context. This is an object, spelled `this.__context__`, which is supplied at creation time. You generally won’t need to reference `this.__context__` directly.
 
 Instead, you can add an `imports` array to a class:
 
 {% highlight js %}
-CLASS({
+foam.CLASS({
   name: 'SomeClass',
   imports: ['foo']
 });
@@ -192,13 +176,13 @@ CLASS({
 At instance creation time, the supplied context will be checked for `foo`, and
 if found, it will be copied into a property on `SomeClass`, also called `foo`.
 
-Therefore inside `SomeClass`, you should refer to `this.foo`, not `this.X.foo`.
+Therefore inside `SomeClass`, you should refer to `this.foo`, not `this.__context__.foo`.
 
 If you want to export one of your properties to descendant objects, you can use
 exports:
 
 {% highlight js %}
-CLASS({
+foam.CLASS({
   name: 'MyController',
   requires: [
     'GestureManager'
@@ -223,11 +207,11 @@ The context for an instance is determined by the following rules in order:
 - If you supply the optional second argument to `create`, that context will be
   used: `SomeClass.create({ foo: 'bar', someContext)`
 - If the class being instantiated was fetched from a context, that context will
-  be used: `var instance = someX.SomeClass.create()`, `instance.X` is `someX`.
-- If the class being instantiated was `require`d, then `this.X` will be used:
-  `var instance = this.SomeClass.create()` then `instance.X === this.X`.
+  be used: `var instance = someX.SomeClass.create()`, `instance.__context__` is `someX`.
+- If the class being instantiated was `require`d, then `this.__context__` will be used:
+  `var instance = this.SomeClass.create()` then `instance.__context__ === this.__context__`.
 - If none of the above apply, eg. `SomeClass.create()`, the global context
-  (`window.X`) is used.
+  (`window.__context__`) is used.
     - These global models (`window.SomeClass`) are planned to be removed later
       on, and the global context might also disappear.
 
@@ -236,7 +220,7 @@ The context for an instance is determined by the following rules in order:
 In `requires`, `imports` and `exports`, you can rename a value. Examples:
 
 {% highlight js %}
-CLASS({
+foam.CLASS({
   name: 'MyClass',
   requires: [
     'CViewActionButton as ActionButton',
@@ -285,11 +269,11 @@ Listeners are like methods, but `this` is always bound to the object, making
 them easier to pass as event handlers.
 
 {% highlight js %}
-CLASS({
+foam.CLASS({
   name: 'Mouse',
   properties: [ 'x', 'y' ],
   methods: {
-    connect: function(element) {
+    function connect(element) {
       element.addEventListener('mousemove', this.onMouseMove);
     }
   },
@@ -301,6 +285,7 @@ CLASS({
         this.x = evt.offsetX;
         this.y = evt.offsetY;
       }
+
     }
   ]
 });
@@ -315,7 +300,7 @@ callbacks, as above, without being explicitly bound.
 - Listeners can be merged, or batched. The first event that comes in starts the
   clock, when the timer expires, your code is called *once* with the *most
   recent* event.
-  - `isMerged: 100` will merge events and fire the real code 100ms after the
+  - `isMerged: true, mergeDelay: 100` will merge events and fire the real code 100ms after the
     *first* event arrives. After that time expires, another event arriving will
     start the clock again. This is useful to avoid spamming database or network
     updates.
@@ -331,7 +316,7 @@ determine whether the button for this action should be hidden, visible but
 disabled, or enabled.
 
 {% highlight js %}
-CLASS({
+foam.CLASS({
   // ...
   actions: [
     {
@@ -376,15 +361,13 @@ The DAO interface looks like this, if you pretend Javascript supports interfaces
 
 {% highlight js %}
 interface DAO extends Sink {
-  void   put(obj, opt_sink);
-  void   remove(id, opt_sink);
-  void   find(query, sink);
-  Future select(sink);
-  Future removeAll(query, sink);
-  Future update(expression);
+  Promise<Object>   put(obj);
+  Promise           remove(id);
+  Promise<Object>   find(query);
+  Promise<sink> select(sink);
+  Promise removeAll();
   void   listen(sink);
   void   pipe(sink):  // select() + listen()
-  void   unlisten(sink);
   DAO    where(query);
   DAO    limit(count);
   DAO    skip(count);
@@ -396,15 +379,12 @@ a `Sink` looks like this:
 
 {% highlight js %}
 interface Sink {
-  void put(obj);
-  void remove(obj);
+  void put(obj, [opt_flowControl]);
+  void remove(obj, [opt_flowControl]);
   void eof();
   void error(msg);
 }
 {% endhighlight %}
-
-Note that every DAO is therefore also a Sink, making it trivial to pull data
-from one DAO into another: `sourceDAO.select(targetDAO)`.
 
 Here's an example of using the DAO interface to make a query:
 

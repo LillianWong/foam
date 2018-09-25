@@ -36,42 +36,50 @@ At the top level of our app, we have a Controller, the C of MVC, which is respon
 
 The Controller knows nothing about how the app is laid out visually, it just creates the components and binds them together.
 
-- A `TextFieldView` for the search box.
+- A `TextField` for the search box.
 - A `ChoiceView` for the sort order drop-down.
-- A `DAOListView` for the list of phones.
+- A `DAOList` for the list of phones.
 
 Let's look into the code, which should go in a new file, `$PROJECT/Controller.js`:
 
 {% highlight js %}
-CLASS({
+foam.CLASS({
+  package: 'tutorial',
   name: 'Controller',
+  extends: 'foam.u2.Element',
+
+  exports: [
+    'as data',
+  ],
+
   properties: [
     {
       name: 'search',
-      view: { factory_: 'foam.ui.TextFieldView', onKeyMode: true }
+      class: 'String',
+      view: { class: 'foam.u2.TextField', onKey: true }
     },
     {
       name: 'order',
-      defaultValue: Phone.NAME,
-      view: { factory_: 'foam.ui.ChoiceView', choices: [
-        [ Phone.NAME, 'Alphabetical' ],
-        [ Phone.AGE,  'Newest' ]
-      ] }
+      value: Phone.NAME,
+      view: {
+        class: 'foam.u2.view.ChoiceView',
+        choices: [
+          [Phone.NAME, 'Alphabetical'],
+          [Phone.AGE, 'Newest']
+        ]
+      }
     },
-    { name: 'dao', defaultValue: phones },    // phones comes from phones.js
-                                              // It's an in-memory DAO
-                                              // of the phone data
+    { name: 'dao', value: phones },
     {
       name: 'filteredDAO',
-      model_: 'foam.core.types.DAOProperty',
+      class: 'foam.dao.DAOProperty',
       view: {
-        factory_: 'foam.ui.DAOListView',
-        rowView: 'PhoneCitationView',
-        mode: 'read-only'
+        class: 'foam.u2.DAOList',
+        rowView: { class: 'tutorial.PhoneCitationView' }
       },
-      dynamicValue: function() {
-        return this.dao.orderBy(this.order)
-            .where(CONTAINS_IC(SEQ(Phone.NAME, Phone.SNIPPET), this.search));
+      expression: function (dao, search, order) {
+        var expr = foam.mlang.Expressions.create();
+        return dao.orderBy(order).where(expr.OR(expr.CONTAINS_IC(Phone.SNIPPET, search), expr.CONTAINS_IC(Phone.SNIPPET, search)));
       }
     }
   ]
@@ -81,12 +89,12 @@ CLASS({
 Let's explain a few pieces of this code in detail.
 
 - Setting `view` to an object like
-  `{ factory_: 'TextFieldView', onKeyMode: true }` specifies the class
-  (`TextFieldView`) that should be used for this view, as well as some arguments
-  to pass to the view, like setting `onKeyMode` to `true`.
-- `search` has its `view` set to `TextFieldView`. By default, `TextFieldView`
+  `{ class: 'TextField', onKey: true }` specifies the class
+  (`TextField`) that should be used for this view, as well as some arguments
+  to pass to the view, like setting `onKey` mode to `true`.
+- `search` has its `view` set to `TextField`. By default, `TextField`
   fires updates when it loses focus or the user presses Enter. Setting
-  `onKeyMode: true` will make it fire an update on every keystroke, meaning the
+  `onKey: true` will make it fire an update on every keystroke, meaning the
   list of phones will filter as you type.
 - `order` defaults to sorting by `Phone.NAME`.
     - For each property `someProp` on a class `MyClass`, there is a static
@@ -98,30 +106,27 @@ Let's explain a few pieces of this code in detail.
       two-way bound to the current value of the drop-down box.
 - `dao` is the master DAO containing all the phones.
     - `phones.js` creates a global array called `phones`. We set the
-    `defaultValue` of our `dao` property to this global value. Remember that
-    `Array` implements the DAO interface.
+    default `value` of our `dao` property to this global value.
 - `filteredDAO` is the interesting DAO. This is the one that actually drives the
   main view on the page, which gets filtered by the search and ordered by the
   sort order.
-    - Its view is `DAOListView`. This view shows a vertical list of rows, one
+    - Its view is `DAOList`. This view shows a vertical list of rows, one
       for each entry in the DAO it is bound to. The view for each row is
       `PhoneCitationView`, which we'll define shortly.
-    - `dynamicValue` takes a function that is treated like a spreadsheet cell:
+    - `expression` takes a function that is treated like a spreadsheet cell:
       it registers listeners on each of the inputs in the function. Then when
       any of the inputs changes, the function will be run again and the value of
       `filteredDAO` updated.
-        - Here, those inputs are `this.order` and `this.search`.
+        - Here, those inputs are `this.dao`, `this.order` and `this.search`.
         - The return value becomes the value of `this.filteredDAO`, which will
           be a sorted and filtered version of the master `this.dao`.
     - `CONTAINS_IC` checks if the string on the left contains the string on the
       right, ignoring case.
-      - `SEQ(Phone.NAME, Phone.SNIPPET` concatenates the phone's name and
-        description blurb.
 
 
-## `DetailView` and Default Templates
+## `DetailView` and UI Library
 
-We told our `DAOListView` above that its `rowView` is called
+We told our `DAOList` above that its `rowView` is called
 `PhoneCitationView`. We need to define this view, which will specify how to
 display a summary of a phone for the catalog page.
 
@@ -136,45 +141,28 @@ what it looks like. To demonstrate, let's load our app using the default
 `DetailView` templates. Then we'll add custom templates so we get the layout and
 style we want.
 
-Add these two dummy views to `Controller.js`:
+Add this dummy view to `Controller.js`:
 
 {% highlight js %}
-CLASS({
+foam.CLASS({
+  package: 'tutorial',
   name: 'PhoneCitationView',
-  extendsModel: 'foam.ui.DetailView'
-});
-
-CLASS({
-  name: 'ControllerView',
-  extendsModel: 'foam.ui.DetailView',
-  requires: [
-    'PhoneCitationView',
-    'foam.ui.TextFieldView',
-    'foam.ui.ChoiceView',
-    'foam.ui.DAOListView',
-    'foam.ui.ImageView'
-  ]
+  extends: 'foam.u2.DetailView',
 });
 {% endhighlight %}
-
-Models should name every other model on which they depend - those they will
-create, or use in their templates - in `requires`. See the
-[Appendix]({{ site.baseurl }}/tutorial/phonecat/8-appendix) for more details on
-`requires`, `imports`, `exports` and `arequire`.
 
 With this, the catalog page will be usable, though ugly. Update `index.html` to be the following:
 
 {% highlight html %}
 <html>
   <head>
-    <script src="foam/core/bootFOAM.js"></script>
-    <link rel="stylesheet" href="foam/core/foam.css" />
+    <script language="javascript" src=“foam2/src/foam.js"></script>
     <script src="Phone.js"></script>
     <script src="phones.js"></script>
     <script src="Controller.js"></script>
   </head>
   <body>
-    <foam id="cat" model="Controller" view="ControllerView"></foam>
+    <foam class="tutorial.Controller"></foam>
   </body>
 </html>
 {% endhighlight %}
@@ -185,7 +173,7 @@ that searching and sorting work properly.
 The `<foam>` tag is a convenience for loading a given model and view, and
 inserting it into the DOM.
 
-Next we'll add custom templates in
+Next we'll add custom UI components in
 [part 4]({{ site.baseurl }}/tutorial/phonecat/4-templates).
 
 There's also quite a bit more about the DAO interface in the

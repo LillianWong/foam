@@ -11,7 +11,7 @@ two views: one for the list of phones and the other for the details of one
 phone.
 
 You can see the finished app running live
-[here]({{ site.baseurl }}/foam/index.html?model=foam.tutorials.phonecat.Controller).
+[here]({{ site.baseurl }}/foam2/tutorial/index.html).
 
 
 ## Defining the Model
@@ -28,14 +28,14 @@ properties, most of them giving the specifications of the device.
 Put the following code in `$PROJECT/Phone.js`:
 
 {% highlight js %}
-CLASS({
+foam.CLASS({
   name: 'Phone',
   properties: [
     'id', 'age', 'name', 'snippet', 'additionalFeatures', 'android',
     'availability', 'battery', 'camera', 'connectivity', 'description',
     'display', 'hardware', 'sizeAndWeight', 'storage', 'details',
-    { name: 'imageUrl', view: 'foam.ui.ImageView' },
-    { name: 'images', model_: 'StringArrayProperty' }
+    { name: 'imageUrl', view: 'foam.u2.ImageView' },
+    { name: 'images', class: 'StringArray' }
   ]
 });
 {% endhighlight %}
@@ -53,7 +53,7 @@ Some are notable:
       key.
 - `imageUrl` has `view` specified as `ImageView`, so that when we render it in
   a view, an `ImageView` will be created for it.
-- `images` is defined as a `StringArrayProperty`, which handles array-valued
+- `images` is defined as a `StringArray`, which handles array-valued
   properties better than the default generic property.
 
 If this class doesn't seem to do much, that's because it doesn't. This is purely
