@@ -174,7 +174,7 @@ The `<foam>` tag is a convenience for loading a given model and view, and
 inserting it into the DOM.
 
 Next we'll add custom UI components in
-[part 4]({{ site.baseurl }}/tutorial/phonecat/4-templates).
+[part 4]({{ site.baseurl }}/tutorial/phonecat/4-UI).
 
 There's also quite a bit more about the DAO interface in the
 [appendix]({{ site.baseurl }}/tutorial/phonecat/8-appendix).

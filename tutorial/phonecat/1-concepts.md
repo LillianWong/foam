@@ -40,7 +40,7 @@ foam.CLASS({
   extends: 'BaseClass',
   properties: [
     {
-      Class: ‘Int’,
+      class: ‘Int’,
       name: 'someField'
     }
   ]
