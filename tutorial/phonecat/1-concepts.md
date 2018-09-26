@@ -142,7 +142,7 @@ defines a property with that name on the class. There are *many* more
 interesting things to set on a property. These are detailed in the
 [appendix]({{ site.baseurl }}/tutorial/phonecat/8-appendix).
 
-### Listeners, Actions and Templates
+### Listeners, Actions and UI Library
 
 These are three kinds of special methods on a class. They are called like normal
 methods.
@@ -235,15 +235,14 @@ FOAM tries to provide many missing utilities from Javascript and web platform.
 It has fast JSON and XML parsers, a parser combinator library, a `SyncManager`
 that can sync data for offline use, a powerful asynchronous function library,
 unit and regression testing, and more.
-
-## Overhead
+<!-- ## Overhead
 
 FOAM is largely written in itself, which helps keep it compact despite all these
 features. Because of this meta-programming nature, FOAM is not very large.
 
 Minified and gzipped, it weighs in at 122 KB as of late November 2014. There is
 a great deal in the core codebase currently that should not be there; as FOAM
-moves towards a 1.0 release we will cut it into smaller pieces.
+moves towards a 1.0 release we will cut it into smaller pieces. -->
 
 ## Next
 

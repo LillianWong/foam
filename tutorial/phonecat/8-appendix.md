@@ -48,10 +48,6 @@ own classes. Here are some of them, in roughly descending order of usefulness:
     value, and therefore no value is stored.
 - `setter: function(nu) { ... }` is called to set the value of the property.
   - See above about pseudoproperties.
-- `dynamicValue: function() { ... }` is passed to `Events.dynamic`, which turns
-  this property into a spreadsheet cell. The function you provide will be re-run
-  every time any of its inputs changes, and the return value becomes the value
-  of the property.
 - `aliases: ['string', 'array']` defines other names for this property. They can
   be used as if they were real properties, but they access the same underlying
   value.
@@ -109,7 +105,7 @@ In addition to things like `setter` and `postSet`, you can listen for updates to
 any property, like so:
 
 {% highlight js %}
-foo.bar$.addListener(function(object, topic, oldValue, newValue) { ... });
+foo.bar$.sub(function(sub, prop, topic, object) { ... });
 {% endhighlight %}
 
 - `object` is the object this property belongs to. It serves as `this`,
@@ -118,9 +114,6 @@ foo.bar$.addListener(function(object, topic, oldValue, newValue) { ... });
   property's name.
 - `oldValue` is the value from before the change.
 - `newValue` is the value after the change.
-
-This functionality is used by things like `Events.dynamic` to register listeners
-on properties changing.
 
 ### Property Types
 
