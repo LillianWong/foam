@@ -235,16 +235,15 @@ FOAM tries to provide many missing utilities from Javascript and web platform.
 It has fast JSON and XML parsers, a parser combinator library, a `SyncManager`
 that can sync data for offline use, a powerful asynchronous function library,
 unit and regression testing, and more.
- <!--- 
- ## Overhead
 
-FOAM is largely written in itself, which helps keep it compact despite all these
-features. Because of this meta-programming nature, FOAM is not very large.
+[comment]: <> (## Overhead)
 
-Minified and gzipped, it weighs in at 122 KB as of late November 2014. There is
-a great deal in the core codebase currently that should not be there; as FOAM
-moves towards a 1.0 release we will cut it into smaller pieces. --->
+[comment]: <> (FOAM is largely written in itself, which helps keep it compact despite all these)
+[comment]: <> (features. Because of this meta-programming nature, FOAM is not very large.)
 
+[comment]: <> (Minified and gzipped, it weighs in at 122 KB as of late November 2014. There is)
+[comment]: <> (a great deal in the core codebase currently that should not be there; as FOAM)
+[comment]: <> (moves towards a 1.0 release we will cut it into smaller pieces.)
 ## Next
 
 You should proceed either to [part 2]({{ site.baseurl }}/tutorial/phonecat/2-model) or
