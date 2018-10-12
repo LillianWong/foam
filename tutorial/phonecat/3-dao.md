@@ -49,7 +49,7 @@ foam.CLASS({
   extends: 'foam.u2.Element',
 
   exports: [
-    'as data',
+    'as data'
   ],
 
   properties: [
@@ -147,7 +147,7 @@ Add this dummy view to `Controller.js`:
 foam.CLASS({
   package: 'tutorial',
   name: 'PhoneCitationView',
-  extends: 'foam.u2.DetailView',
+  extends: 'foam.u2.DetailView'
 });
 {% endhighlight %}
 
@@ -156,7 +156,7 @@ With this, the catalog page will be usable, though ugly. Update `index.html` to 
 {% highlight html %}
 <html>
   <head>
-    <script language="javascript" src=“foam2/src/foam.js"></script>
+    <script language="javascript" src="foam2/src/foam.js"></script>
     <script src="Phone.js"></script>
     <script src="phones.js"></script>
     <script src="Controller.js"></script>

@@ -67,7 +67,7 @@ Create `$PROJECT/index.html` with the following contents:
 <html>
   <head>
     <script src="foam2/src/foam.js"></script>
-    <script src=“foam_powered.js"></script>
+    <script src="foam_powered.js"></script>
   </head>
   <body>
     <script>
