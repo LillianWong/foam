@@ -243,7 +243,7 @@ features. Because of this meta-programming nature, FOAM is not very large.
 
 Minified and gzipped, it weighs in at 122 KB as of late November 2014. There is
 a great deal in the core codebase currently that should not be there; as FOAM
-moves towards a 1.0 release we will cut it into smaller pieces. -->
+moves towards a 1.0 release we will cut it into smaller pieces. --->
 
 ## Next
 
