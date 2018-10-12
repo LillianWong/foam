@@ -235,7 +235,8 @@ FOAM tries to provide many missing utilities from Javascript and web platform.
 It has fast JSON and XML parsers, a parser combinator library, a `SyncManager`
 that can sync data for offline use, a powerful asynchronous function library,
 unit and regression testing, and more.
- <!-- Overhead
+ <!-- 
+ ## Overhead
 
 FOAM is largely written in itself, which helps keep it compact despite all these
 features. Because of this meta-programming nature, FOAM is not very large.
