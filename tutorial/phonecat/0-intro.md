@@ -27,7 +27,7 @@ This tutorial will provide the user with a good understanding of the core concep
 The main features of FOAM are: 
 
 - An advanced class system, similar in principle to Java's but much more powerful.
-- A Javascript library for abstracting across data sources, with helpers for caching,logging and more.
+- A Javascript library for abstracting across data sources with helpers for caching, logging, etc.
 - A view library for use in building web applications.
 
 For more information about the philosophy of FOAM, select the following link to [About FOAM](https://katemengjunxia.github.io/foam/about/) or follow this tutorial and dive right in.    

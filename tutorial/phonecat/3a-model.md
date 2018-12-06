@@ -43,11 +43,11 @@ For example, the model for an email client might consist of a handful of classes
 
 * Most of these properties are straightforward; just the data about each phone.  However, below is a list of notable properties: 
 
-  1. **ID** -`id` is not required, but it's generally a good idea for objects to have a primary key. If you have an `id` property, that's the primary key. Failing that, the first property in the `properties` array is the primary key.
+  1. `id` is not required, but it's generally a good idea for objects to have a primary key. If you have an `id` property, that's the primary key. Failing that, the first property in the `properties` array is the primary key.
 
-  2. **View/ImageView** - `imageUrl` has `view` specified as `ImageView` so that when we render it in a view, an `ImageView` will be created for it.
+  2. `imageUrl` has `view` specified as `ImageView` so that when we render it in a view, an `ImageView` will be created for it.
 
-  3. **images / StringArray** - `images` is defined as a `StringArray`, which handles array-valued properties better than the default generic property.
+  3. `images` is defined as a `StringArray`, which handles array-valued properties better than the default generic property.
 
 
 

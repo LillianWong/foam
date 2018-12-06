@@ -14,7 +14,7 @@ In FOAM, a `view` needs to present a UI component by defining a template metho
 FOAM’s U2 syntax provides methods for adding and interacting with UI components, including:
 
 {% raw %}
-- `start()` ecreates **<--is this a typo for the word 'creates' or 'recreates'?** an element and adds it as a child.
+- `start()` creates an element and adds it as a child.
 - `end()` terminates a `start()`.
 - `add(args)` adds UI components to this element.
 - `addClass(cls)` specifies a CSS class to this element.

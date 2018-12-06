@@ -390,12 +390,11 @@ foam.CLASS({
 });
 {% endhighlight %}
 
-There’s quite a lot there, but it’s mostly the same pattern repeated for each group of specs. 
+There’s quite a lot there but it’s mostly the same pattern repeated for each group of specs. 
 
 #### **About the Above Code:**
 
-1. the `$` appended to `this.image`
-2. `this.image$` is `a slot` (object-oriented pointer) of `this.image`. Its value is bound to `this.image` and changes every time `this.image` changes.
+The `$` appended to `this.image`. `this.image$` is `a slot` (object-oriented pointer) of `this.image`. Its value is bound to `this.image` and changes every time `this.image` changes.
 
 Once you’ve got this file saved, reload the app and navigate to a phone.  You should see its information nicely laid out. Clicking a thumbnail image will load the larger version.
 

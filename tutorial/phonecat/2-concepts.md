@@ -20,7 +20,7 @@ FOAM's approach is similar in principle: you write a definition for the class an
 
 FOAM's class definitions take the form of a JSON object passed to the `CLASS()` global function. 
 
-**JAVA Class example:**  (*a table comparing the JAVA with FOAM side-by-side would be ideal*)
+**JAVA Class example:**  
 
      {% highlight java %}
      public class MyClass extends BaseClass {
@@ -114,7 +114,7 @@ These objects can be manipulated very much like plain old Javascript objects suc
 
 ### **4. Extending Classes** 
 
-Classes can extend other classes, which means they will inherit all of the parent class's properties and methods (and listeners, actions, etc ...).
+Classes can extend other classes which means they will inherit all of the parent class's properties and methods (and listeners, actions, etc ...).
 
 For example:
 
@@ -132,7 +132,7 @@ For example:
      });
      {% endhighlight %}
 
-This example defines a new class `Point3D` that extends `Point`. It inherits all the properties (`x` and `y`) of `Point`, and adds a new one, `z`. It would inherit the method `scale` too, but instead overrides it. 
+This example defines a new class `Point3D` that extends `Point`. It inherits all the properties (`x` and `y`) of `Point`, and adds a new one, `z`. It would inherit the method `scale` as well as override it. 
 
 This overridden method calls `this.SUPER(s)` which is similar to calling `super.scale(s)` in Java.
 
@@ -158,7 +158,7 @@ MVC is a classic pattern for breaking up applications into reusable, decoupled c
 - **View:** Presents your data to the user for viewing and editing.
 - **Controller:** Mediates between model and view.
 
-Many frameworks focus on the model and the view which are application-specific because every app needs its own data types, forms and style of presentation. But the definitions of the models and their views can be pretty lightweight, especially if you're given some extensible, customizable components for common needs.
+Many frameworks focus on the model and the view which are application-specific because every app needs its own data types, forms and style of presentation. But the definitions of the models and their views can be lightweight, especially if you're given some extensible, customizable components for common needs.
 
 FOAM goes a step farther and allows controllers to be generic so that they can operate on all kinds of models and views. In many cases, FOAM's default controllers can be used to build the structure of your application, requiring you to write code only for application-specific details while the controllers provide navigation, animations, editing, searching, and more.
 
